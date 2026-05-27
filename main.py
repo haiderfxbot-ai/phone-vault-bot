@@ -70,11 +70,13 @@ def stream_ai_response(user_input):
         else:
             return (
                 f"{Fore.RED}Ollama returned status {response.status_code}. "
-                f"Ensure ollama serve is running.{Fore.RESET}"
+                f"Expected 200. Ensure Ollama is running (ollama serve &) "
+                f"and the model is pulled (ollama pull llama3). "
+                f"This client uses HTTP POST to {OLLAMA_API}.{Fore.RESET}"
             )
     except requests.exceptions.ConnectionError:
         return (
-            f"{Fore.RED}Cannot reach Ollama at {OLLAMA_API}. "
+            f"{Fore.RED}Cannot reach Ollama at {OLLAMA_API} via POST. "
             f"Run: ollama serve &\n"
             f"Use --dry-run to test the interface offline.{Fore.RESET}"
         )
@@ -86,11 +88,9 @@ def start_repl():
     os.system("clear")
     initialize_system()
 
-    mode = f"{Fore.YELLOW}[DRY-RUN]{Fore.RESET}" if dry_run else f"{Fore.GREEN}[LIVE]{Fore.RESET}"
-
     banner = f"""
 {Fore.CYAN}==================================================
-{Fore.GREEN}   JARVIS/MYTHOS CORE — AI ENGINE v3.0{mode}
+{Fore.GREEN}   JARVIS/MYTHOS CORE — AI ENGINE v3.0 {'[LIVE CORE MATRIX]' if not dry_run else '[DRY-RUN]'}
 {Fore.YELLOW}   Model: {MODEL} | Backend: Ollama (loopback)
 {Fore.MAGENTA}   Signature: Developer Haider
 {Fore.CYAN}==================================================
