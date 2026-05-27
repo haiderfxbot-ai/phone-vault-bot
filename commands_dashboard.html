@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JARVIS Mythos Core — Command Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 20px 16px 60px;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(0, 180, 255, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(120, 0, 255, 0.04) 0%, transparent 60%);
+    }
+
+    .container {
+      max-width: 720px;
+      width: 100%;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+      animation: fadeSlide 0.8s ease-out;
+    }
+
+    header h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00d4ff, #7c3aed, #ff006a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    header .sub {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 6px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    header .badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.25);
+      color: #00d4ff;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #666;
+      margin: 28px 0 14px;
+      padding-left: 4px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s ease;
+      animation: fadeSlide 0.5s ease-out backwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .card.completed {
+      border-color: rgba(0, 200, 83, 0.35);
+      background: rgba(0, 200, 83, 0.06);
+      box-shadow: 0 0 24px rgba(0, 200, 83, 0.05);
+    }
+
+    .card.completed::before {
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.04), transparent);
+      opacity: 1;
+    }
+
+    .card .step {
+      min-width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #555;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      flex-shrink: 0;
+      transition: all 0.4s ease;
+    }
+
+    .card.completed .step {
+      background: rgba(0, 200, 83, 0.2);
+      border-color: rgba(0, 200, 83, 0.4);
+      color: #00c853;
+    }
+
+    .card .content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card .label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .card .cmd {
+      font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #c8d6e5;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .card.completed .cmd {
+      color: #69f0ae;
+    }
+
+    .card .actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+
+    .card .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      transition: all 0.4s ease;
+      flex-shrink: 0;
+    }
+
+    .card.completed .status-dot {
+      background: #00c853;
+      box-shadow: 0 0 12px rgba(0, 200, 83, 0.5);
+    }
+
+    .btn-copy {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #aaa;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .btn-copy:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-copy:active {
+      transform: scale(0.95);
+    }
+
+    .btn-copy.copied {
+      background: rgba(0, 200, 83, 0.15);
+      border-color: rgba(0, 200, 83, 0.3);
+      color: #69f0ae;
+    }
+
+    .manual-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 32px;
+      animation: fadeSlide 0.6s ease-out backwards 0.3s;
+    }
+
+    .manual-section h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #00d4ff;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .manual-section p {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    .manual-section .node {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 2px solid rgba(0, 212, 255, 0.2);
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .manual-section .node strong {
+      color: #e0e0e0;
+      font-size: 0.82rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .manual-section .node span {
+      color: #888;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.7rem;
+      color: #444;
+      letter-spacing: 1px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(0, 200, 83, 0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 200, 83, 0.25);
+      color: #69f0ae;
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.4s ease;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 4px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      animation: fadeSlide 0.6s ease-out backwards 0.1s;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00c853, #00d4ff);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .progress-text {
+      text-align: center;
+      font-size: 0.7rem;
+      color: #555;
+      margin-top: -18px;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+      animation: fadeSlide 0.6s ease-out backwards 0.15s;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 500px) {
+      body { padding: 14px 12px 40px; }
+      header h1 { font-size: 1.3rem; }
+      .card { padding: 12px 14px; gap: 10px; }
+      .card .cmd { font-size: 0.75rem; }
+      .btn-copy { padding: 5px 10px; font-size: 0.65rem; }
+      .card .step { min-width: 26px; height: 26px; font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>JARVIS MYTHOS CORE</h1>
+      <div class="sub">Deployment Command Dashboard</div>
+      <div class="badge">DEVELOPER HAIDER</div>
+    </header>
+
+    <div class="progress-bar">
+      <div class="fill" id="progressFill"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 8 steps completed</div>
+
+    <div class="section-title">Setup Pipeline</div>
+
+    <div class="card" data-step="1" data-command="pkg update -y && pkg upgrade -y">
+      <div class="step">1</div>
+      <div class="content">
+        <div class="label">Update Packages</div>
+        <div class="cmd">pkg update -y && pkg upgrade -y</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="2" data-command="pkg install -y python git curl">
+      <div class="step">2</div>
+      <div class="content">
+        <div class="label">Install Dependencies</div>
+        <div class="cmd">pkg install -y python git curl</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="3" data-command="pip install requests colorama python-dotenv">
+      <div class="step">3</div>
+      <div class="content">
+        <div class="label">Install Python Libraries</div>
+        <div class="cmd">pip install requests colorama python-dotenv</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="4" data-command="curl -fsSL https://ollama.com/install.sh | sh">
+      <div class="step">4</div>
+      <div class="content">
+        <div class="label">Install Ollama</div>
+        <div class="cmd">curl -fsSL https://ollama.com/install.sh | sh</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="5" data-command="ollama serve &">
+      <div class="step">5</div>
+      <div class="content">
+        <div class="label">Start Ollama Service</div>
+        <div class="cmd">ollama serve &amp;</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="6" data-command="ollama pull llama3">
+      <div class="step">6</div>
+      <div class="content">
+        <div class="label">Pull Llama3 Model</div>
+        <div class="cmd">ollama pull llama3</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="7" data-command="python3 main.py">
+      <div class="step">7</div>
+      <div class="content">
+        <div class="label">Launch AI Core</div>
+        <div class="cmd">python3 main.py</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="8" data-command="python3 main.py --dry-run">
+      <div class="step">8</div>
+      <div class="content">
+        <div class="label">Test Offline Mode</div>
+        <div class="cmd">python3 main.py --dry-run</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="manual-section">
+      <h3>Dashboard User Manual</h3>
+      <p>This dashboard tracks every Termux command required to deploy the JARVIS Mythos Core from scratch on any Android device. Each card represents one atomic setup step. Use the guide below to understand the flow.</p>
+
+      <div class="node">
+        <strong>Environment Initialization (Step 1)</strong>
+        <span>Updates all Termux base packages to their latest versions. Run this first to avoid dependency conflicts.</span>
+      </div>
+      <div class="node">
+        <strong>System Dependency Installation (Step 2)</strong>
+        <span>Installs Python (interpreter), Git (version control), and curl (HTTP client) into the Termux environment.</span>
+      </div>
+      <div class="node">
+        <strong>Python Library Layer (Step 3)</strong>
+        <span>Pulls the three required modules: <code>requests</code> (HTTP client for Ollama API), <code>colorama</code> (terminal color output), and <code>python-dotenv</code> (environment variable loader).</span>
+      </div>
+      <div class="node">
+        <strong>Ollama Engine Deployment (Step 4)</strong>
+        <span>Downloads and installs the Ollama binary via the official bootstrap script. This is the local LLM inference server that runs entirely on-device.</span>
+      </div>
+      <div class="node">
+        <strong>Background Service Activation (Step 5)</strong>
+        <span>Launches the Ollama REST API server on <code>127.0.0.1:11434</code> as a background process. The ampersand (<code>&amp;</code>) keeps it running after the terminal session continues.</span>
+      </div>
+      <div class="node">
+        <strong>Model Acquisition (Step 6)</strong>
+        <span>Pulls the <code>llama3</code> model weights into Ollama's local storage. This may take several minutes depending on your connection speed. The model is cached after download.</span>
+      </div>
+      <div class="node">
+        <strong>Core Execution (Step 7)</strong>
+        <span>Starts the custom Python REPL client. It connects to the local Ollama server, injects the uncensored Mythos system prompt, and opens an interactive session. Type <code>exit</code> to quit.</span>
+      </div>
+      <div class="node">
+        <strong>Offline Dry-Run Test (Step 8)</strong>
+        <span>Launches the same interface but in simulation mode. No Ollama connection is required — ideal for verifying the UI, color rendering, and command flow before the model is fully ready.</span>
+      </div>
+
+      <p style="margin-top:16px;color:#666;font-size:0.75rem;">
+        <strong>Persistent Tracking:</strong> Each card's green accent state is saved to your browser's <code>localStorage</code>. Close, refresh, or reopen the page — completed steps remain marked. Tap <strong>Copy</strong> on any command to copy it to your clipboard and mark it complete.
+      </p>
+    </div>
+
+    <div class="footer-note">
+      Specially Crafted by Developer HAIDER &bull; Mythos Edition
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copied to clipboard</div>
+
+  <script>
+    function copyCmd(btn) {
+      const card = btn.closest('.card');
+      const cmd = card.getAttribute('data-command');
+      const step = card.getAttribute('data-step');
+
+      if (!cmd) return;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(cmd).catch(() => fallbackCopy(cmd));
+      } else {
+        fallbackCopy(cmd);
+      }
+
+      card.classList.add('completed');
+      btn.classList.add('copied');
+      btn.textContent = 'Copied';
+
+      const completed = JSON.parse(localStorage.getItem('mythos_completed') || '[]');
+      if (!completed.includes(step)) {
+        completed.push(step);
+        localStorage.setItem('mythos_completed', JSON.stringify(completed));
+      }
+
+      updateProgress();
+
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+
+    function updateProgress() {
+      const completed = JSON.parse(localStorage.getItem('mythos_completed') || '[]');
+      const total = document.querySelectorAll('.card').length;
+      const done = completed.length;
+      const pct = Math.min((done / total) * 100, 100);
+
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressText').textContent = done + ' / ' + total + ' steps completed';
+    }
+
+    function restoreState() {
+      const completed = JSON.parse(localStorage.getItem('mythos_completed') || '[]');
+      completed.forEach(function(step) {
+        const card = document.querySelector('.card[data-step="' + step + '"]');
+        if (card) {
+          card.classList.add('completed');
+          const btn = card.querySelector('.btn-copy');
+          if (btn) {
+            btn.classList.add('copied');
+            btn.textContent = 'Copied';
+          }
+        }
+      });
+      updateProgress();
+    }
+
+    document.addEventListener('DOMContentLoaded', restoreState);
+  </script>
+</body>
+</html>
