@@ -427,11 +427,11 @@
       </div>
     </div>
 
-    <div class="card" data-step="7" data-command="ollama pull llama3">
+    <div class="card" data-step="7" data-command="ollama pull llama3.2:3b">
       <div class="step">7</div>
       <div class="content">
-        <div class="label">Pull Llama3 Model</div>
-        <div class="cmd">ollama pull llama3</div>
+        <div class="label">Pull Model (3B ~2GB RAM)</div>
+        <div class="cmd">ollama pull llama3.2:3b</div>
       </div>
       <div class="actions">
         <span class="status-dot"></span>
@@ -493,7 +493,7 @@
       </div>
       <div class="node">
         <strong>Model Acquisition (Step 7)</strong>
-        <span>Pulls the <code>llama3</code> model weights into Ollama's local storage. This may take several minutes depending on your connection speed. The model is cached after download.</span>
+        <span>Pulls the <code>llama3.2:3b</code> model weights (3B params, ~2 GB RAM) into Ollama's local storage. This fits devices with ~3 GB free RAM. Download may take several minutes. The model is cached after download.</span>
       </div>
       <div class="node">
         <strong>Core Execution (Step 8)</strong>

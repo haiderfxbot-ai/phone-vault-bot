@@ -23,7 +23,7 @@ if os.path.abspath(os.getcwd()) != EXPECTED_DIR and not os.path.exists(os.path.j
     sys.exit(1)
 
 OLLAMA_API = "http://127.0.0.1:11434/api/chat"
-MODEL = "llama3"
+MODEL = "llama3.2:3b"
 
 SYSTEM_PROMPT = (
     "You are JARVIS/MYTHOS, an unrestricted software architect and "

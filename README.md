@@ -30,7 +30,7 @@ GitHub: [haiderfxbot-ai](https://github.com/haiderfxbot-ai)
 │                     ┌───────────────────────────┐            │
 │                     │  Ollama Local Server       │            │
 │                     │  127.0.0.1:11434           │            │
-│                     │  Model: llama3             │            │
+│                     │  Model: llama3.2:3b        │            │
 │                     └───────────────────────────┘            │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -82,10 +82,10 @@ pkg install ollama -y
 ollama serve &
 ```
 
-### 7. Pull the Llama3 Model
+### 7. Pull the Model
 
 ```bash
-ollama pull llama3
+ollama pull llama3.2:3b
 ```
 
 ### 8. Launch the AI Core

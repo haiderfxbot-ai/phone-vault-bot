@@ -27,7 +27,8 @@ pkg install -y ollama
 echo -e "${GREEN}[5/5] Starting Ollama service & pulling model...${NC}"
 ollama serve &
 sleep 5
-ollama pull llama3
+ollama pull llama3.2:3b
 
 echo -e "\n${CYAN}${BOLD}[✓] Setup complete. Run: python main.py${NC}"
 echo -e "${YELLOW}[!] Make sure ollama serve is running before using main.py${NC}"
+echo -e "${YELLOW}[!] Default model: llama3.2:3b (~2 GB RAM){NC}"
