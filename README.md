@@ -61,31 +61,40 @@ pkg install -y python git curl
 pip install requests colorama python-dotenv
 ```
 
-### 4. Install Ollama
+### 4. Clone the Repository
 
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
+cd /storage/emulated/0
+rm -rf jarvis_ai_core
+git clone https://github.com/haiderfxbot-ai/phone-vault-bot.git jarvis_ai_core
+cd jarvis_ai_core
 ```
 
-### 5. Start Ollama Background Service
+### 5. Install Ollama (Termux Native)
+
+```bash
+pkg install ollama -y
+```
+
+### 6. Start Ollama Background Service
 
 ```bash
 ollama serve &
 ```
 
-### 6. Pull the Llama3 Model
+### 7. Pull the Llama3 Model
 
 ```bash
 ollama pull llama3
 ```
 
-### 7. Launch the AI Core
+### 8. Launch the AI Core
 
 ```bash
 python3 main.py
 ```
 
-### 8. Test Offline Mode (No Ollama Required)
+### 9. Test Offline Mode (No Ollama Required)
 
 ```bash
 python3 main.py --dry-run

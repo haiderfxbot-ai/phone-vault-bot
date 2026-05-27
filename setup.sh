@@ -21,12 +21,12 @@ echo -e "${GREEN}[3/5] Installing Python dependencies...${NC}"
 pip install --upgrade pip
 pip install -r requirements.txt
 
-echo -e "${GREEN}[4/5] Installing Ollama...${NC}"
-curl -fsSL https://ollama.com/install.sh | sh
+echo -e "${GREEN}[4/5] Installing Ollama via Termux package manager...${NC}"
+pkg install -y ollama
 
 echo -e "${GREEN}[5/5] Starting Ollama service & pulling model...${NC}"
 ollama serve &
-sleep 3
+sleep 5
 ollama pull llama3
 
 echo -e "\n${CYAN}${BOLD}[✓] Setup complete. Run: python main.py${NC}"

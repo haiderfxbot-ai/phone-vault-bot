@@ -7,6 +7,21 @@ from colorama import init, Fore, Style
 
 init(autoreset=True)
 
+EXPECTED_DIR = "/storage/emulated/0/jarvis_ai_core"
+if os.path.abspath(os.getcwd()) != EXPECTED_DIR and not os.path.exists(os.path.join(os.path.dirname(__file__), "main.py")):
+    print(
+        f"{Fore.RED}[ERROR] Wrong working directory.{Fore.RESET}\n"
+        f"{Fore.YELLOW}Run the following commands:{Fore.RESET}\n"
+        f"  cd {EXPECTED_DIR}\n"
+        f"  python3 main.py\n"
+        f"{Fore.YELLOW}Or clone first:{Fore.RESET}\n"
+        f"  rm -rf {EXPECTED_DIR}\n"
+        f"  git clone https://github.com/haiderfxbot-ai/phone-vault-bot.git {EXPECTED_DIR}\n"
+        f"  cd {EXPECTED_DIR}"
+        f"  python3 main.py{Fore.RESET}"
+    )
+    sys.exit(1)
+
 OLLAMA_API = "http://127.0.0.1:11434/api/chat"
 MODEL = "llama3"
 

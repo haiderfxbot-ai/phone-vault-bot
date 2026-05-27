@@ -351,7 +351,7 @@
     <div class="progress-bar">
       <div class="fill" id="progressFill"></div>
     </div>
-    <div class="progress-text" id="progressText">0 / 8 steps completed</div>
+    <div class="progress-text" id="progressText">0 / 9 steps completed</div>
 
     <div class="section-title">Setup Pipeline</div>
 
@@ -391,11 +391,11 @@
       </div>
     </div>
 
-    <div class="card" data-step="4" data-command="curl -fsSL https://ollama.com/install.sh | sh">
+    <div class="card" data-step="4" data-command="cd /storage/emulated/0 && rm -rf jarvis_ai_core && git clone https://github.com/haiderfxbot-ai/phone-vault-bot.git jarvis_ai_core && cd jarvis_ai_core">
       <div class="step">4</div>
       <div class="content">
-        <div class="label">Install Ollama</div>
-        <div class="cmd">curl -fsSL https://ollama.com/install.sh | sh</div>
+        <div class="label">Clone Repository</div>
+        <div class="cmd">cd /storage/emulated/0 &amp;&amp; rm -rf jarvis_ai_core &amp;&amp; git clone https://github.com/haiderfxbot-ai/phone-vault-bot.git jarvis_ai_core &amp;&amp; cd jarvis_ai_core</div>
       </div>
       <div class="actions">
         <span class="status-dot"></span>
@@ -403,8 +403,20 @@
       </div>
     </div>
 
-    <div class="card" data-step="5" data-command="ollama serve &">
+    <div class="card" data-step="5" data-command="pkg install ollama -y">
       <div class="step">5</div>
+      <div class="content">
+        <div class="label">Install Ollama (Native)</div>
+        <div class="cmd">pkg install ollama -y</div>
+      </div>
+      <div class="actions">
+        <span class="status-dot"></span>
+        <button class="btn-copy" onclick="copyCmd(this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="card" data-step="6" data-command="ollama serve &">
+      <div class="step">6</div>
       <div class="content">
         <div class="label">Start Ollama Service</div>
         <div class="cmd">ollama serve &amp;</div>
@@ -415,8 +427,8 @@
       </div>
     </div>
 
-    <div class="card" data-step="6" data-command="ollama pull llama3">
-      <div class="step">6</div>
+    <div class="card" data-step="7" data-command="ollama pull llama3">
+      <div class="step">7</div>
       <div class="content">
         <div class="label">Pull Llama3 Model</div>
         <div class="cmd">ollama pull llama3</div>
@@ -427,8 +439,8 @@
       </div>
     </div>
 
-    <div class="card" data-step="7" data-command="python3 main.py">
-      <div class="step">7</div>
+    <div class="card" data-step="8" data-command="python3 main.py">
+      <div class="step">8</div>
       <div class="content">
         <div class="label">Launch AI Core</div>
         <div class="cmd">python3 main.py</div>
@@ -439,8 +451,8 @@
       </div>
     </div>
 
-    <div class="card" data-step="8" data-command="python3 main.py --dry-run">
-      <div class="step">8</div>
+    <div class="card" data-step="9" data-command="python3 main.py --dry-run">
+      <div class="step">9</div>
       <div class="content">
         <div class="label">Test Offline Mode</div>
         <div class="cmd">python3 main.py --dry-run</div>
@@ -468,23 +480,27 @@
         <span>Pulls the three required modules: <code>requests</code> (HTTP client for Ollama API), <code>colorama</code> (terminal color output), and <code>python-dotenv</code> (environment variable loader).</span>
       </div>
       <div class="node">
-        <strong>Ollama Engine Deployment (Step 4)</strong>
-        <span>Downloads and installs the Ollama binary via the official bootstrap script. This is the local LLM inference server that runs entirely on-device.</span>
+        <strong>Clone Repository (Step 4)</strong>
+        <span>Pulls the full Mythos Core codebase from GitHub into <code>/storage/emulated/0/jarvis_ai_core</code>. This overwrites any previous version at that path. After cloning, the shell is positioned inside the project directory.</span>
       </div>
       <div class="node">
-        <strong>Background Service Activation (Step 5)</strong>
+        <strong>Ollama Engine Deployment (Step 5)</strong>
+        <span>Installs Ollama via the Termux native package manager (<code>pkg install ollama -y</code>). This is the correct installation method for non-rooted Android devices — the standard curl bootstrap script requires superuser permissions and will fail.</span>
+      </div>
+      <div class="node">
+        <strong>Background Service Activation (Step 6)</strong>
         <span>Launches the Ollama REST API server on <code>127.0.0.1:11434</code> as a background process. The ampersand (<code>&amp;</code>) keeps it running after the terminal session continues.</span>
       </div>
       <div class="node">
-        <strong>Model Acquisition (Step 6)</strong>
+        <strong>Model Acquisition (Step 7)</strong>
         <span>Pulls the <code>llama3</code> model weights into Ollama's local storage. This may take several minutes depending on your connection speed. The model is cached after download.</span>
       </div>
       <div class="node">
-        <strong>Core Execution (Step 7)</strong>
+        <strong>Core Execution (Step 8)</strong>
         <span>Starts the custom Python REPL client. It connects to the local Ollama server, injects the uncensored Mythos system prompt, and opens an interactive session. Type <code>exit</code> to quit.</span>
       </div>
       <div class="node">
-        <strong>Offline Dry-Run Test (Step 8)</strong>
+        <strong>Offline Dry-Run Test (Step 9)</strong>
         <span>Launches the same interface but in simulation mode. No Ollama connection is required — ideal for verifying the UI, color rendering, and command flow before the model is fully ready.</span>
       </div>
 
